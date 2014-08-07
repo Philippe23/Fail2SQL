@@ -10,12 +10,31 @@ Installation
 3. Create table by piping fail2ban.sql into mysql (mysql -u fail2ban -p fail2ban < fail2ban.sql)
 4. Edit fail2sql and change home path and sql login details at the top of the file.
 5. Update Geo IP Database (./fail2ban -u)
-6. Tell fail2ban to call fail2sql by appending to actionban in your action script.
+6. Copy action.d/fail2sql.conf to your fail2ban action.d folder.
+7. Edit the new action.d so the fail2sql variable points to your installed location if needed.
+8. Tell fail2ban to call fail2sql by appending to your action list in your fail2ban jail.local config file.
+9. Restart fail2ban
 
-Example for /etc/fail2ban/action.d/iptables.conf
+Example:
 
-actionban = iptables -I fail2ban-<name> 1 -s <ip> -j DROP
-            /usr/local/fail2sql/fail2sql <name> <protocol> <port> <ip>
+--=[ BEFORE ]=----------------------------------------------------------------
+[postfix-iptables]
+enabled  = true
+filter   = postfix
+action   = iptables-multiport[name=POSTFIX,port="smtp,submission",protocol=tcp]
+logpath  = /var/log/messages
+maxretry = 9
+--=[ AFTER ]=-----------------------------------------------------------------
+[postfix-iptables]
+enabled  = true
+filter   = postfix
+action   = iptables-multiport[name=POSTFIX,port="smtp,submission",protocol=tcp]
+           fail2sql[name=POSTFIX,port="smtp,submission",protocol=tcp]
+logpath  = /var/log/messages
+maxretry = 9
+------------------------------------------------------------------------------
+
+Notice the name, port, and protocol variables in the new fail2sql line.
 
 =====
 Usage
