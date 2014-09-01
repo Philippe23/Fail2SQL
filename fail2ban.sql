@@ -7,7 +7,7 @@ CREATE TABLE `fail2ban` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` text NOT NULL,
   `protocol` varchar(4) NOT NULL,
-  `port` int(11) NOT NULL,
+  `port` varchar(64) NOT NULL,
   `ip` varchar(20) NOT NULL,
   `count` int(11) NOT NULL,
   `longitude` varchar(20) DEFAULT NULL,
